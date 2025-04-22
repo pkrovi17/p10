@@ -16,12 +16,24 @@ public class PriorityEvents extends Object{
         this.heapData = new Event[capacity];
         this.size = 0;
     }
-    // TODO
-    public PriorityEvents(Event [] events, int size) {
-        if (events == null || size < 0 || size > events.length) {
-            throw new IllegalArgumentException("Invalid events array or size");
+   // Constructor: uses heapify on an existing array
+    public PriorityEvents(Event[] events, int size) {
+        if (events == null || size < 0 || size > events.length)
+            throw new IllegalArgumentException("Invalid inputs");
+        for (int i = 0; i < size; i++) {
+            if (events[i] == null || events[i].isComplete())
+                throw new IllegalArgumentException("Invalid or completed Event in array");
+            }
+        heapData = events.clone(); // Shallow copy, fine for now
+        completed = new Event[size * 2];
+        this.size = size;
+        completedSize = 0;
+        // Heapify process (bottom-up)
+        for (int i = size / 2 - 1; i >= 0; i--) {
+        percolateDown(i);
         }
     }
+
 
     public static boolean isSortedAlphabetically () {
         return sortAlphabetically;
