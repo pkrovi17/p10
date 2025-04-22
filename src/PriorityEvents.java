@@ -99,7 +99,7 @@ public class PriorityEvents extends Object{
         copyCompletedHelper(result, index + 1);
     }
 
-    public Event peekNextEvent() {
+    public Event peekNextEvent() throws NoSuchElementException {
         if (isEmpty()) {
             throw new NoSuchElementException("No events available");
         }
@@ -118,7 +118,7 @@ public class PriorityEvents extends Object{
     copyHeapHelper(result, index + 1);
     }
 
-    public void addEvent(Event e) throws IllegalArgumentException, IllegalStateException {
+    public void addEvent(Event e) throws IllegalStateException, IllegalArgumentException {
         if (e == null)
             throw new IllegalArgumentException("Event cannot be null");
         if (e.isComplete())
