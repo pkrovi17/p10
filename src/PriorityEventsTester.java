@@ -1,5 +1,7 @@
 // TODO File header
 
+import java.util.NoSuchElementException;
+
 /**
  * Tester class for the CS300 P10 Priority Events project. You may add tester methods to this class
  * but they must be declared private; the existing public tester methods may use the output of these
@@ -21,11 +23,27 @@ public class PriorityEventsTester {
   }
   
   private static boolean testAddEventChronological() {
-    return false; // TODO
+      PriorityEvents.sortChronologically();
+      PriorityEvents queue = new PriorityEvents(5);
+      Event e1 = new Event("Sleep", 15, 22, 30);
+      Event e2 = new Event("Dinner", 15, 20, 0);
+      Event e3 = new Event("Workout", 14, 10, 0);
+      queue.addEvent(e1);
+      queue.addEvent(e2);
+      queue.addEvent(e3);
+      return queue.peekNextEvent().equals(e3); // earliest time
   }
   
   private static boolean testAddEventAlphabetical() {
-    return false; // TODO
+      PriorityEvents.sortAlphabetically();
+      PriorityEvents queue = new PriorityEvents(5);
+      Event a = new Event("Zoom call", 10, 9, 0);
+      Event b = new Event("Breakfast", 10, 8, 0);
+      Event c = new Event("Emails", 10, 10, 0);
+      queue.addEvent(a);
+      queue.addEvent(b);
+      queue.addEvent(c);
+      return queue.peekNextEvent().equals(b); // "Breakfast" is alphabetically first
   }
   
   /**
@@ -43,11 +61,31 @@ public class PriorityEventsTester {
   }
   
   private static boolean testCompleteEventChronological() {
-    return false; // TODO
+    PriorityEvents.sortChronologically();
+    PriorityEvents queue = new PriorityEvents(3);
+    Event e1 = new Event("Study", 12, 12, 0);
+    Event e2 = new Event("Class", 12, 10, 0);
+
+    queue.addEvent(e1);
+    queue.addEvent(e2);
+    queue.completeEvent(); // should complete e2
+
+    Event[] completed = queue.getCompletedEvents();
+    return completed.length == 1 && completed[0].equals(e2) && completed[0].isComplete();
   }
   
   private static boolean testCompleteEventAlphabetical() {
-    return false; // TODO
+    PriorityEvents.sortAlphabetically();
+    PriorityEvents queue = new PriorityEvents(3);
+    Event e1 = new Event("Beta", 10, 10, 0);
+    Event e2 = new Event("Alpha", 10, 10, 0);
+
+    queue.addEvent(e1);
+    queue.addEvent(e2);
+    queue.completeEvent(); // should complete "Alpha"
+
+    Event[] completed = queue.getCompletedEvents();
+    return completed.length == 1 && completed[0].equals(e2) && completed[0].isComplete();
   }
   
   /**
@@ -55,7 +93,27 @@ public class PriorityEventsTester {
    * @return true if all tests pass; false otherwise
    */
   public static boolean testPeek() {
-    return false; // TODO
+    {
+      PriorityEvents.sortChronologically();
+      PriorityEvents queue = new PriorityEvents(2);
+      Event a = new Event("First", 10, 9, 0);
+      Event b = new Event("Second", 10, 10, 0);
+      queue.addEvent(b);
+      queue.addEvent(a);
+      if ((!queue.peekNextEvent().equals(a) && queue.size() == 2)) {
+        return false;
+      }
+    }
+    {
+      PriorityEvents.sortChronologically();
+      PriorityEvents queue = new PriorityEvents(2);
+      try {
+        queue.peekNextEvent();
+        return false; // should throw exception
+      } catch (NoSuchElementException e) {
+      }
+    }
+    return true;
   }
   
   /**
@@ -64,7 +122,14 @@ public class PriorityEventsTester {
    * @return true if all tests pass; false otherwise
    */
   public static boolean testHeapify() {
-    return false; // TODO
+    PriorityEvents.sortChronologically();
+    Event[] input = {
+      new Event("Z", 15, 12, 0),
+      new Event("A", 12, 8, 0),
+      new Event("M", 13, 9, 0)
+    };
+    PriorityEvents queue = new PriorityEvents(input, 3);
+    return queue.peekNextEvent().equals(input[1]); // "A" is earliest
   }
 
   public static void main(String[] args) {
