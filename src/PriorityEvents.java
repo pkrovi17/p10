@@ -7,7 +7,7 @@ public class PriorityEvents extends Object{
     private int size;
     private static boolean sortAlphabetically;
 
-    public PriorityEvents(int capacity) {
+    public PriorityEvents(int capacity) throws IllegalArgumentException {
         if (capacity < 0) {
             throw new IllegalArgumentException("Capacity must be non-negative");
         }
@@ -17,7 +17,7 @@ public class PriorityEvents extends Object{
         this.size = 0;
     }
    // Constructor: uses heapify on an existing array
-    public PriorityEvents(Event[] events, int size) {
+    public PriorityEvents(Event[] events, int size) throws IllegalArgumentException {
         if (events == null || size < 0 || size > events.length)
             throw new IllegalArgumentException("Invalid inputs");
         for (int i = 0; i < size; i++) {
@@ -33,7 +33,6 @@ public class PriorityEvents extends Object{
         percolateDown(i);
         }
     }
-
 
     public static boolean isSortedAlphabetically () {
         return sortAlphabetically;
@@ -119,7 +118,7 @@ public class PriorityEvents extends Object{
     copyHeapHelper(result, index + 1);
     }
 
-    public void addEvent(Event e) {
+    public void addEvent(Event e) throws IllegalArgumentException, IllegalStateException {
         if (e == null)
             throw new IllegalArgumentException("Event cannot be null");
         if (e.isComplete())
@@ -170,7 +169,7 @@ public class PriorityEvents extends Object{
         }
     }
 
-    public void completeEvent() {
+    public void completeEvent() throws IllegalStateException {
         if (isEmpty())
             throw new IllegalStateException("Queue is empty");
         if (completedSize >= completed.length)
