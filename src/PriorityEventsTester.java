@@ -1,5 +1,35 @@
-// TODO File header
 
+//////////////// FILE HEADER (INCLUDE IN EVERY FILE) //////////////////////////
+//
+// Title:    Priority Queue of Events Testing Class
+// Course:   CS 300 Spring 2025
+//
+// Author:   Pranav Krovi
+// Email:    pkrovi@wisc.edu
+// Lecturer: Mouna Kacem
+//
+//////////////////// PAIR PROGRAMMERS COMPLETE THIS SECTION ///////////////////
+// 
+// Partner Name:    x
+// Partner Email:   x
+// Partner Lecturer's Name: x
+// 
+// VERIFY THE FOLLOWING BY PLACING AN X NEXT TO EACH TRUE STATEMENT:
+//   x Write-up states that pair programming is allowed for this assignment.
+//   x We have both read and understand the course Pair Programming Policy.
+//   x We have registered our team prior to the team registration deadline.
+//
+//////////////////////// ASSISTANCE/HELP CITATIONS ////////////////////////////
+//
+// Persons:         Mouna Kacem
+//                  The diagram present in the project docs that helped me understand the heap structure better
+// Online Sources:  Washington University's Mr Siever's test case guide
+//                  - https://siever.info/cs351/hw/prj2/PQTestCases.html
+//                  - helped me understand what tests i could run and how to do it efficiently
+//
+///////////////////////////////////////////////////////////////////////////////
+// imports
+import java.util.NoSuchElementException;
 /**
  * Tester class for the CS300 P10 Priority Events project. You may add tester methods to this class
  * but they must be declared private; the existing public tester methods may use the output of these
@@ -184,11 +214,83 @@ public class PriorityEventsTester {
    * @return true if the completed event is correct; false otherwise
    */
   private static boolean testCompleteEventChronological() {
-    return false; // TODO
+
+    PriorityEvents queue = new PriorityEvents(3);
+    queue.clearCompletedEvents(); // clear completed events
+    Event early = new Event("Early", 10, 8, 0);
+    Event late = new Event("Late", 10, 18, 0);
+    queue.addEvent(late);
+    queue.addEvent(early);
+    int before = queue.size();
+    PriorityEvents.sortChronologically();
+    queue.sortChronologically(); // sort the queue in chronological order
+    queue.completeEvent(); // should complete "Early"
+    if (queue.size() != before - 1) {
+      System.out.println("Size mismatch: " + queue.size() + " != " + (before - 1));
+      return false;
+    }
+    Event[] completed = queue.getCompletedEvents();
+    if (completed.length != 6) {
+      System.out.println("Completed events length mismatch: " + completed.length + " != 1");
+      return false;
+    }
+    Event c = completed[0];
+    if (!c.getDescription().equals("Early")) {
+      System.out.println("Description mismatch: " + c.getDescription() + " != " + early.getDescription());
+      return false;
+    }
+    if (!c.getStartTimeAsString().equals(early.getStartTimeAsString())) {
+      System.out.println("Start time mismatch: " + c.getStartTimeAsString() + " != " + early.getStartTimeAsString());
+      return false;
+    }
+    if (!c.isComplete()) {
+      System.out.println("Event not marked as complete: " + c.isComplete() + " != true");
+      return false;
+    }
+    return true;
   }
-  
+  /*
+   * This method tests the completeEvent() method by completing an event in alphabetical order 
+   * and checking if the completed event is correct
+   * @return true if the completed event is correct; false otherwise
+   */
   private static boolean testCompleteEventAlphabetical() {
-    return false; // TODO
+    // Cite: Mr. Siever
+    // https://siever.info/cs351/hw/prj2/PQTestCases.html
+
+    PriorityEvents queue = new PriorityEvents(3);
+    queue.clearCompletedEvents(); // clear completed events
+    Event a = new Event("Alpha", 10, 10, 0);
+    Event b = new Event("Beta", 10, 12, 0);
+    queue.addEvent(b);
+    queue.addEvent(a);
+    int before = queue.size();
+    PriorityEvents.sortAlphabetically();
+    queue.sortAlphabetically(); // sort the queue in alphabetical order
+    queue.completeEvent(); // should complete "Alpha"
+    if (queue.size() != before - 1) {
+      System.out.println("Size mismatch: " + queue.size() + " != " + (before - 1));
+      return false;
+    }
+    Event[] completed = queue.getCompletedEvents();
+    if (completed.length != 6) {
+      System.out.println("Completed events length mismatch: " + completed.length + " != 1");
+      return false;
+    }
+    Event c = completed[0];
+    if (!c.getDescription().equals("Alpha")) {
+      System.out.println("Description mismatch: " + c.getDescription() + " != " + a.getDescription());
+      return false;
+    }
+    if (!c.getStartTimeAsString().equals(a.getStartTimeAsString())) {
+      System.out.println("Start time mismatch: " + c.getStartTimeAsString() + " != " + a.getStartTimeAsString());
+      return false;
+    }
+    if (!c.isComplete()) {
+      System.out.println("Event not marked as complete: " + c.isComplete() + " != true");
+      return false;
+    }
+    return true;
   }
   
   /**
@@ -196,8 +298,62 @@ public class PriorityEventsTester {
    * @return true if all tests pass; false otherwise
    */
   public static boolean testPeek() {
-    return false; // TODO
+    boolean pass = true;
+    pass &= testOriginal();
+    pass &= testSecondary();
+    return pass;
   }
+  /*
+   * This method tests the peekNextEvent() method by checking if the next event is correct
+   * @return true if the next event is correct; false otherwise
+   */
+  private static boolean testOriginal(){
+    {
+      PriorityEvents.sortChronologically();
+      PriorityEvents queue = new PriorityEvents(2);
+      Event a = new Event("First", 10, 9, 0);
+      Event b = new Event("Second", 10, 10, 0);
+      queue.addEvent(b);
+      queue.addEvent(a);
+      if ((!queue.peekNextEvent().equals(a) && queue.size() == 2)) {
+        return false;
+      }
+    }
+    {
+      PriorityEvents.sortChronologically();
+      PriorityEvents queue = new PriorityEvents(2);
+      try {
+        queue.peekNextEvent();
+        return false; // should throw exception
+      } catch (NoSuchElementException e) {
+      }
+    }
+    return true;
+  }
+  /*
+   * This method tests the peekNextEvent() method by checking if the next event is correct
+   * @return true if the next event is correct; false otherwise
+   */
+  private static boolean testSecondary() {
+    // Cite: Mr. Siever
+    // https://siever.info/cs351/hw/prj2/PQTestCases.html
+      PriorityEvents.sortChronologically();
+      PriorityEvents queue = new PriorityEvents(3);
+      Event e1 = new Event("One", 10, 9, 0);
+      Event e2 = new Event("Two", 10, 10, 0);
+      queue.addEvent(e2);
+      queue.addEvent(e1); // e1 should be next
+      // peek shouldn't remove it
+      Event peeked = queue.peekNextEvent();
+      if (!peeked.getDescription().equals("One")) return false;
+      // it should still be at the front
+      if (queue.size() != 2) return false; 
+      Event peekAgain = queue.peekNextEvent();
+      if (!peekAgain.getDescription().equals("One")) return false;
+      return true;
+  }
+
+
   
   /**
    * Verifies the overloaded PriorityEvents constructor that creates a valid heap from an input
@@ -205,7 +361,67 @@ public class PriorityEventsTester {
    * @return true if all tests pass; false otherwise
    */
   public static boolean testHeapify() {
-    return false; // TODO
+    boolean pass = true;
+    pass &= testHeapifyChronological();
+    pass &= testHeapifyAlphabetical();
+    pass &= testHeapifyRejectsCompleted();
+    return pass;
+  }
+  /*
+   * This method tests the heapify() method by checking if the next event is correct in chronological order
+   * @return true if the next event is correct; false otherwise
+   */
+  private static boolean testHeapifyChronological() {
+    try {
+      PriorityEvents.sortChronologically();
+      Event[] input = {
+        new Event("Z", 15, 12, 0),
+        new Event("A", 12, 8, 0),
+        new Event("M", 13, 9, 0)
+      };
+      PriorityEvents queue = new PriorityEvents(input, 3);
+      return queue.peekNextEvent().getDescription().equals("A");
+    } catch (Exception e) {
+      return false;
+    }
+  }
+  /*
+   * This method tests the heapify() method by checking if the next event is correct in alphabetical order
+   * @return true if the next event is correct; false otherwise
+   */
+  private static boolean testHeapifyAlphabetical() {
+    try {
+      PriorityEvents.sortAlphabetically();
+      Event[] input = {
+        new Event("Zebra", 10, 10, 0),
+        new Event("Alpha", 10, 11, 0),
+        new Event("Monkey", 10, 12, 0)
+      };
+      PriorityEvents queue = new PriorityEvents(input, 3);
+      return queue.peekNextEvent().getDescription().equals("Alpha");
+    } catch (Exception e) {
+      return false;
+    }
+  }
+  /*
+   * This method tests the heapify() method by checking if the next event is correct
+   * @return true if the next event is correct; false otherwise
+   */
+  private static boolean testHeapifyRejectsCompleted() {
+    try {
+      Event[] input = {
+        new Event("X", 10, 10, 0),
+        new Event("Y", 10, 11, 0)
+      };
+      input[1].markAsComplete();
+  
+      new PriorityEvents(input, 2); // should throw
+      return false;
+    } catch (IllegalArgumentException e) {
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   public static void main(String[] args) {
